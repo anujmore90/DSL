@@ -1,0 +1,99 @@
+#include<stdio.h>
+#include<stdbool.h>
+
+#define MAX 20
+
+int n;
+int adj[MAX][MAX];
+bool visited[MAX];
+
+void DFS(int v)
+{
+    visited[v] = true;
+
+    for(int i = 0; i < n; i++)
+    {
+        if(adj[v][i] != 0 && !visited[i])
+        {
+            DFS(i);
+        }
+    }
+}
+
+void checkconnectivity()
+{
+    DFS(0);
+
+    for(int i = 0; i < n; i++)
+    {
+        if(!visited[i])
+        {
+            printf("\nGraph is disconnected\n");
+            return;
+        }
+    }
+
+    printf("\nGraph is connected\n");
+}
+
+int main()
+{
+    int m;
+    int u, v, cost;
+
+    printf("Enter number of cities: ");
+    scanf("%d", &n);
+
+    if(n <= 0 || n > MAX)
+    {
+        printf("Invalid number of cities");
+        return 1;
+    }
+
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            adj[i][j] = 0;
+        }
+    }
+
+    printf("Enter number of flight paths: ");
+    scanf("%d", &m);
+
+    printf("Enter flight paths(source destination cost):\n");
+
+    for(int i = 0; i < m; i++)
+    {
+        scanf("%d%d%d", &u, &v, &cost);
+
+        if(u < 0 || u >= n || v < 0 || v >= n)
+        {
+            printf("Invalid city number\n");
+            return 1;
+        }
+
+        adj[u][v] = cost;
+        adj[v][u] = cost;
+    }
+
+    printf("\nAdjacency Matrix:\n");
+
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            printf("%3d", adj[i][j]);
+        }
+        printf("\n");
+    }
+
+    for(int i = 0; i < n; i++)
+    {
+        visited[i] = false;
+    }
+
+    checkconnectivity();
+
+    return 0;
+}d
