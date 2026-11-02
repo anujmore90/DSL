@@ -1,0 +1,349 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    int timeSlot; 
+    int isBooked;
+    char name[50];
+    struct Node* prev;
+    struct Node* next;
+} Node;
+
+Node* head = NULL;
+
+Node* createNode(int time) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->timeSlot = time;
+    newNode->isBooked = 0;
+    strcpy(newNode->name, "Free");
+    newNode->prev = newNode->next = NULL;
+    return newNode;
+}
+
+void createSlots() {
+    for (int i = 9; i <= 17; i++) {
+        Node* newNode = createNode(i);
+        if (!head)
+            head = newNode;
+        else {
+            Node* temp = head;
+            while (temp->next)
+                temp = temp->next;
+            temp->next = newNode;
+            newNode->prev = temp;
+        }
+    }
+}
+void displayFreeSlots() {
+    Node* temp = head;
+    printf("\nAvailable Slots:\n");
+    while (temp) {
+        if (!temp->isBooked)
+            printf("Slot: %d:00 - Available\n", temp->timeSlot);
+        temp = temp->next;
+    }
+}
+
+void bookAppointment() {
+    int slot;
+    char name[50];
+
+    printf("\nEnter time slot to book (9-17): ");
+    scanf("%d", &slot);
+
+    Node* temp = head;
+    while (temp) {
+        if (temp->timeSlot == slot) {
+            if (!temp->isBooked) {
+                printf("Enter your name: ");
+                scanf("%s", name);
+                temp->isBooked = 1;
+                strcpy(temp->name, name);
+                printf("Appointment booked at %d:00 for %s.\n", slot, name);
+                return;
+            } else {
+                printf("Slot already booked!\n");
+                return;
+            }
+        }
+        temp = temp->next;
+    }
+    printf("Invalid slot.\n");
+}
+
+void cancelAppointment() {
+    int slot;
+    printf("\nEnter time slot to cancel (9-17): ");
+    scanf("%d", &slot);
+
+    Node* temp = head;
+    while (temp) {
+        if (temp->timeSlot == slot) {
+            if (temp->isBooked) {
+                temp->isBooked = 0;
+                strcpy(temp->name, "Free");
+                printf("Appointment at %d:00 canceled.\n", slot);
+                return;
+            } else {
+                printf("Slot is not booked.\n");
+                return;
+            }
+        }
+        temp = temp->next;
+    }
+    printf("Invalid slot.\n");
+}
+
+void displayAll() {
+    Node* temp = head;
+    printf("\nAll Appointments:\n");
+    while (temp) {
+        printf("Slot: %d:00 - %s\n", temp->timeSlot,
+               temp->isBooked ? temp->name : "Free");
+        temp = temp->next;
+    }
+}
+
+void sortListByTime() {
+    int swapped;
+    Node *ptr1;
+    Node *lptr = NULL;
+
+    if (head == NULL)
+        return;
+
+    do {
+        swapped = 0;
+        ptr1 = head;
+
+        while (ptr1->next != lptr) {
+            if (ptr1->timeSlot > ptr1->next->timeSlot) {
+                
+                int t = ptr1->timeSlot;
+                int b = ptr1->isBooked;
+                char n[50];
+                strcpy(n, ptr1->name);
+
+                ptr1->timeSlot = ptr1->next->timeSlot;
+                ptr1->isBooked = ptr1->next->isBooked;
+                strcpy(ptr1->name, ptr1->next->name);
+
+                ptr1->next->timeSlot = t;
+                ptr1->next->isBooked = b;
+                strcpy(ptr1->next->name, n);
+
+                swapped = 1;
+            }
+            ptr1 = ptr1->next;
+        }
+        lptr = ptr1;
+    }
+    while (swapped);
+
+    printf("\nList sorted based on time.\n");
+}
+
+int main() {
+    int choice;
+    createSlots();
+
+    do {
+        printf("\n--- Appointment Booking System ---\n");
+        printf("1. Display Free Slots\n");
+        printf("2. Book Appointment\n");
+        printf("3. Cancel Appointment\n");
+        printf("4. Display All Appointments\n");
+        printf("5. Sort List by Time\n");
+        printf("0. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1: displayFreeSlots(); break;
+            case 2: bookAppointment(); break;
+            case 3: cancelAppointment(); break;
+            case 4: displayAll(); break;
+            case 5: sortListByTime(); break;
+            case 0: printf("Exiting...\n"); break;
+            default: printf("Invalid choice.\n");
+        }
+    }
+    while (choice != 0);
+    return 0;
+}
+
+output=
+
+
+--- Appointment Booking System ---
+1. Display Free Slots
+2. Book Appointment
+3. Cancel Appointment
+4. Display All Appointments
+5. Sort List by Time
+0. Exit
+Enter your choice: 1
+
+Available Slots:
+Slot: 9:00 - Available
+Slot: 10:00 - Available
+Slot: 11:00 - Available
+Slot: 12:00 - Available
+Slot: 13:00 - Available
+Slot: 14:00 - Available
+Slot: 15:00 - Available
+Slot: 16:00 - Available
+Slot: 17:00 - Available
+
+--- Appointment Booking System ---
+1. Display Free Slots
+2. Book Appointment
+3. Cancel Appointment
+4. Display All Appointments
+5. Sort List by Time
+0. Exit
+Enter your choice: 2
+
+Enter time slot to book (9-17): 10
+Enter your name: Anuj
+Appointment booked at 10:00 for Anuj.
+
+--- Appointment Booking System ---
+1. Display Free Slots
+2. Book Appointment
+3. Cancel Appointment
+4. Display All Appointments
+5. Sort List by Time
+0. Exit
+Enter your choice: 1
+
+Available Slots:
+Slot: 9:00 - Available
+Slot: 11:00 - Available
+Slot: 12:00 - Available
+Slot: 13:00 - Available
+Slot: 14:00 - Available
+Slot: 15:00 - Available
+Slot: 16:00 - Available
+Slot: 17:00 - Available
+
+--- Appointment Booking System ---
+1. Display Free Slots
+2. Book Appointment
+3. Cancel Appointment
+4. Display All Appointments
+5. Sort List by Time
+0. Exit
+Enter your choice: 3
+
+Enter time slot to cancel (9-17): 10
+Appointment at 10:00 canceled.
+
+--- Appointment Booking System ---
+1. Display Free Slots
+2. Book Appointment
+3. Cancel Appointment
+4. Display All Appointments
+5. Sort List by Time
+0. Exit
+Enter your choice: 1
+
+Available Slots:
+Slot: 9:00 - Available
+Slot: 10:00 - Available
+Slot: 11:00 - Available
+Slot: 12:00 - Available
+Slot: 13:00 - Available
+Slot: 14:00 - Available
+Slot: 15:00 - Available
+Slot: 16:00 - Available
+Slot: 17:00 - Available
+
+--- Appointment Booking System ---
+1. Display Free Slots
+2. Book Appointment
+3. Cancel Appointment
+4. Display All Appointments
+5. Sort List by Time
+0. Exit
+Enter your choice: 2
+
+Enter time slot to book (9-17): 10
+Enter your name: Anuj
+Appointment booked at 10:00 for Anuj.
+
+--- Appointment Booking System ---
+1. Display Free Slots
+2. Book Appointment
+3. Cancel Appointment
+4. Display All Appointments
+5. Sort List by Time
+0. Exit
+Enter your choice: 4
+
+All Appointments:
+Slot: 9:00 - Free
+Slot: 10:00 - Anuj
+Slot: 11:00 - Free
+Slot: 12:00 - Free
+Slot: 13:00 - Free
+Slot: 14:00 - Free
+Slot: 15:00 - Free
+Slot: 16:00 - Free
+Slot: 17:00 - Free
+
+--- Appointment Booking System ---
+1. Display Free Slots
+2. Book Appointment
+3. Cancel Appointment
+4. Display All Appointments
+5. Sort List by Time
+0. Exit
+Enter your choice: 2
+
+Enter time slot to book (9-17): 9
+Enter your name: Mansi
+Appointment booked at 9:00 for Mansi.
+
+--- Appointment Booking System ---
+1. Display Free Slots
+2. Book Appointment
+3. Cancel Appointment
+4. Display All Appointments
+5. Sort List by Time
+0. Exit
+Enter your choice: 4
+
+All Appointments:
+Slot: 9:00 - Mansi
+Slot: 10:00 - Anuj
+Slot: 11:00 - Free
+Slot: 12:00 - Free
+Slot: 13:00 - Free
+Slot: 14:00 - Free
+Slot: 15:00 - Free
+Slot: 16:00 - Free
+Slot: 17:00 - Free
+
+--- Appointment Booking System ---
+1. Display Free Slots
+2. Book Appointment
+3. Cancel Appointment
+4. Display All Appointments
+5. Sort List by Time
+0. Exit
+Enter your choice: 5
+
+List sorted based on time.
+
+--- Appointment Booking System ---
+1. Display Free Slots
+2. Book Appointment
+3. Cancel Appointment
+4. Display All Appointments
+5. Sort List by Time
+0. Exit
+Enter your choice: 
+
+=== Execution Timed Out ===
