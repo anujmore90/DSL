@@ -1,0 +1,344 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TABLE_SIZE 10
+
+typedef struct {
+    int key;
+    long phone;
+} Client;
+
+Client table[TABLE_SIZE];
+int isOccupied[TABLE_SIZE];
+
+// Hash Functions
+int hash1(int key) {
+    return key % TABLE_SIZE;
+}
+
+int hash2(int key) {
+    return 7 - (key % 7);
+}
+
+// Initialize Table
+void initTable() {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        isOccupied[i] = 0;
+        table[i].key = -1;
+        table[i].phone = -1;
+    }
+}
+
+// Insert using Linear Probing
+void insertLinear(int key, long phone) {
+    int index = hash1(key);
+    int start = index;
+
+    while (isOccupied[index]) {
+        index = (index + 1) % TABLE_SIZE;
+
+        if (index == start) {
+            printf("Hash table is full!\n");
+            return;
+        }
+    }
+
+    table[index].key = key;
+    table[index].phone = phone;
+    isOccupied[index] = 1;
+}
+
+// Insert using Quadratic Probing
+void insertQuadratic(int key, long phone) {
+    int index = hash1(key);
+    int i = 0;
+
+    while (isOccupied[(index + i * i) % TABLE_SIZE]) {
+        i++;
+
+        if (i == TABLE_SIZE) {
+            printf("Hash table is full!\n");
+            return;
+        }
+    }
+
+    index = (index + i * i) % TABLE_SIZE;
+    table[index].key = key;
+    table[index].phone = phone;
+    isOccupied[index] = 1;
+}
+
+// Insert using Double Hashing
+void insertDoubleHash(int key, long phone) {
+    int index1 = hash1(key);
+    int index2 = hash2(key);
+    int i = 0;
+    int index;
+
+    while (1) {
+        index = (index1 + i * index2) % TABLE_SIZE;
+
+        if (!isOccupied[index])
+            break;
+
+        i++;
+
+        if (i == TABLE_SIZE) {
+            printf("Hash table is full!\n");
+            return;
+        }
+    }
+
+    table[index].key = key;
+    table[index].phone = phone;
+    isOccupied[index] = 1;
+}
+
+// Search Function (Common)
+void search(int key) {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        if (isOccupied[i] && table[i].key == key) {
+            printf("Client Found: Phone Number = %ld\n",
+                   table[i].phone);
+            return;
+        }
+    }
+
+    printf("Client Not Found.\n");
+}
+
+// Display Table
+void displayTable() {
+    printf("\nHash Table:\n");
+
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        if (isOccupied[i]) {
+            printf("Index %d --> Key: %d, Phone: %ld\n",
+                   i, table[i].key, table[i].phone);
+        }
+        else {
+            printf("Index %d --> Empty\n", i);
+        }
+    }
+}
+
+// Main Function
+int main() {
+    int choice, key;
+    long phone;
+
+    while (1) {
+        printf("\n--- Telephone Book using Hashing ---\n");
+        printf("1. Insert (Linear Probing)\n");
+        printf("2. Insert (Quadratic Probing)\n");
+        printf("3. Insert (Double Hashing)\n");
+        printf("4. Search by Key\n");
+        printf("5. Display Table\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+
+        scanf("%d", &choice);
+
+        switch (choice) {
+
+            case 1:
+                initTable();
+                printf("Enter number of clients: ");
+                int n1;
+                scanf("%d", &n1);
+
+                for (int i = 0; i < n1; i++) {
+                    printf("Enter Client Key and Phone: ");
+                    scanf("%d %ld", &key, &phone);
+                    insertLinear(key, phone);
+                }
+                break;
+
+            case 2:
+                initTable();
+                printf("Enter number of clients: ");
+                int n2;
+                scanf("%d", &n2);
+
+                for (int i = 0; i < n2; i++) {
+                    printf("Enter Client Key and Phone: ");
+                    scanf("%d %ld", &key, &phone);
+                    insertQuadratic(key, phone);
+                }
+                break;
+
+            case 3:
+                initTable();
+                printf("Enter number of clients: ");
+                int n3;
+                scanf("%d", &n3);
+
+                for (int i = 0; i < n3; i++) {
+                    printf("Enter Client Key and Phone: ");
+                    scanf("%d %ld", &key, &phone);
+                    insertDoubleHash(key, phone);
+                }
+                break;
+
+            case 4:
+                printf("Enter Client Key to Search: ");
+                scanf("%d", &key);
+                search(key);
+                break;
+
+            case 5:
+                displayTable();
+                break;
+
+            case 6:
+                exit(0);
+
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+
+    return 0;
+}
+
+output=
+
+
+--- Telephone Book using Hashing ---
+1. Insert (Linear Probing)
+2. Insert (Quadratic Probing)
+3. Insert (Double Hashing)
+4. Search by Key
+5. Display Table
+6. Exit
+Enter your choice: 1
+Enter number of clients: 1
+Enter Client Key and Phone: 10 9834262175
+
+--- Telephone Book using Hashing ---
+1. Insert (Linear Probing)
+2. Insert (Quadratic Probing)
+3. Insert (Double Hashing)
+4. Search by Key
+5. Display Table
+6. Exit
+Enter your choice: 2
+Enter number of clients: 1
+Enter Client Key and Phone: 20 9834262175
+
+--- Telephone Book using Hashing ---
+1. Insert (Linear Probing)
+2. Insert (Quadratic Probing)
+3. Insert (Double Hashing)
+4. Search by Key
+5. Display Table
+6. Exit
+Enter your choice: 3
+Enter number of clients: 1
+Enter Client Key and Phone: 30 9834262175
+
+--- Telephone Book using Hashing ---
+1. Insert (Linear Probing)
+2. Insert (Quadratic Probing)
+3. Insert (Double Hashing)
+4. Search by Key
+5. Display Table
+6. Exit
+Enter your choice: 4
+Enter Client Key to Search: 30
+Client Found: Phone Number = 9834262175
+
+--- Telephone Book using Hashing ---
+1. Insert (Linear Probing)
+2. Insert (Quadratic Probing)
+3. Insert (Double Hashing)
+4. Search by Key
+5. Display Table
+6. Exit
+Enter your choice: 9834262175
+Invalid choice. Try again.
+
+--- Telephone Book using Hashing ---
+1. Insert (Linear Probing)
+2. Insert (Quadratic Probing)
+3. Insert (Double Hashing)
+4. Search by Key
+5. Display Table
+6. Exit
+Enter your choice: 4
+Enter Client Key to Search: 20
+Client Not Found.
+
+--- Telephone Book using Hashing ---
+1. Insert (Linear Probing)
+2. Insert (Quadratic Probing)
+3. Insert (Double Hashing)
+4. Search by Key
+5. Display Table
+6. Exit
+Enter your choice: 5
+
+Hash Table:
+Index 0 --> Key: 30, Phone: 9834262175
+Index 1 --> Empty
+Index 2 --> Empty
+Index 3 --> Empty
+Index 4 --> Empty
+Index 5 --> Empty
+Index 6 --> Empty
+Index 7 --> Empty
+Index 8 --> Empty
+Index 9 --> Empty
+
+--- Telephone Book using Hashing ---
+1. Insert (Linear Probing)
+2. Insert (Quadratic Probing)
+3. Insert (Double Hashing)
+4. Search by Key
+5. Display Table
+6. Exit
+Enter your choice: 5
+
+Hash Table:
+Index 0 --> Key: 30, Phone: 9834262175
+Index 1 --> Empty
+Index 2 --> Empty
+Index 3 --> Empty
+Index 4 --> Empty
+Index 5 --> Empty
+Index 6 --> Empty
+Index 7 --> Empty
+Index 8 --> Empty
+Index 9 --> Empty
+
+--- Telephone Book using Hashing ---
+1. Insert (Linear Probing)
+2. Insert (Quadratic Probing)
+3. Insert (Double Hashing)
+4. Search by Key
+5. Display Table
+6. Exit
+Enter your choice: 5
+
+Hash Table:
+Index 0 --> Key: 30, Phone: 9834262175
+Index 1 --> Empty
+Index 2 --> Empty
+Index 3 --> Empty
+Index 4 --> Empty
+Index 5 --> Empty
+Index 6 --> Empty
+Index 7 --> Empty
+Index 8 --> Empty
+Index 9 --> Empty
+
+--- Telephone Book using Hashing ---
+1. Insert (Linear Probing)
+2. Insert (Quadratic Probing)
+3. Insert (Double Hashing)
+4. Search by Key
+5. Display Table
+6. Exit
+Enter your choice: 
+
+=== Execution Timed Out ===
