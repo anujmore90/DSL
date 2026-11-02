@@ -1,0 +1,146 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define Node
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+// Function to insert at the end of list
+Node* insert(Node* head, int val) {
+    Node* temp = (Node*)malloc(sizeof(Node));
+    temp->data = val;
+    temp->next = NULL;
+
+    if (head == NULL)
+        return temp;
+
+    Node* curr = head;
+    while (curr->next != NULL)
+        curr = curr->next;
+
+    curr->next = temp;
+    return head;
+}
+
+// Function to search for a value in a list
+int search(Node* head, int val) {
+    Node* curr = head;
+    while (curr != NULL) {
+        if (curr->data == val)
+            return 1;
+        curr = curr->next;
+    }
+    return 0;
+}
+
+// a) Intersection: Both Vanilla and Butterscotch
+Node* intersection(Node* a, Node* b) {
+    Node* result = NULL;
+    Node* curr = a;
+
+    while (curr != NULL) {
+        if (search(b, curr->data))
+            result = insert(result, curr->data);
+        curr = curr->next;
+    }
+    return result;
+}
+
+// b) Symmetric Difference: Either but not both
+Node* symmetric_diff(Node* a, Node* b) {
+    Node* result = NULL;
+    Node* curr = a;
+    while (curr != NULL) {
+        if (!search(b, curr->data))
+            result = insert(result, curr->data);
+        curr = curr->next;
+    }
+
+    curr = b;
+    while (curr != NULL) {
+        if (!search(a, curr->data))
+            result = insert(result, curr->data);
+        curr = curr->next;
+    }
+
+    return result;
+}
+
+// Count total elements in a list
+int count(Node* head) {
+    int c = 0;
+    while (head != NULL) {
+        c++;
+        head = head->next;
+    }
+    return c;
+}
+
+// Display the set
+void display(Node* head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+// Main function
+int main() {
+    Node* vanilla = NULL;
+    Node* butterscotch = NULL;
+
+    int n, m, i, roll, totalStudents;
+
+    printf("Enter total number of students in class: ");
+    scanf("%d", &totalStudents);
+
+    printf("Enter number of students who like Vanilla: ");
+    scanf("%d", &n);
+
+    printf("Enter roll numbers of students who like Vanilla:\n");
+    for (i = 0; i < n; i++) {
+        scanf("%d", &roll);
+        vanilla = insert(vanilla, roll);
+    }
+
+    printf("Enter number of students who like Butterscotch: ");
+    scanf("%d", &m);
+
+    printf("Enter roll numbers of students who like Butterscotch:\n");
+    for (i = 0; i < m; i++) {
+        scanf("%d", &roll);
+        butterscotch = insert(butterscotch, roll);
+    }
+
+    Node* both = intersection(vanilla, butterscotch);
+    Node* either_not_both = symmetric_diff(vanilla, butterscotch);
+    printf("\nStudent who like both vanilla and Butterscotch:\n");
+    display(both);
+
+    printf("Student who like either vanilla or Butterscotch but not both:\n ");
+    display(either_not_both);
+
+    int totalKnown = count(both) + count(either_not_both);
+    int neither = totalStudents - totalKnown;
+    printf("Number of students who like neither Vanilla nor Butterscotch:%d\n",neither);
+    
+    return 0;
+}
+
+out put-
+Enter total number of students in class: 10
+Enter number of students who like Vanilla: 4
+Enter roll numbers of students who like Vanilla:
+1 2 3 4
+Enter number of students who like Butterscotch: 4
+Enter roll numbers of students who like Butterscotch:
+3 4 5 6
+
+Student who like both vanilla and Butterscotch:
+3 4 
+Student who like either vanilla or Butterscotch but not both:
+ 1 2 5 6 
+Number of students who like neither Vanilla nor Butterscotch:4
