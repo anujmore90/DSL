@@ -1,0 +1,167 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#define SIZE 100
+
+// Stack for characters
+char stack[SIZE];
+int top = -1;
+
+void push(char c) {
+    if (top == SIZE - 1)
+        printf("Stack Overflow\n");
+    else
+        stack[++top] = c;
+}
+
+char pop() {
+    if (top == -1)
+        return '\0';
+    else
+        return stack[top--];
+}
+
+char peek() {
+    if (top == -1)
+        return '\0';
+    else
+        return stack[top];
+}
+
+// Check for matching brackets
+int isMatchingPair(char open, char close) {
+    return (open == '(' && close == ')') ||
+           (open == '{' && close == '}') ||
+           (open == '[' && close == ']');
+}
+
+// 1. Check if expression is well-parenthesized
+int isWellParenthesized(char* expr) {
+    for (int i = 0; expr[i]; i++) {
+        char ch = expr[i];
+        if (ch == '(' || ch == '{' || ch == '[')
+            push(ch);
+        else if (ch == ')' || ch == '}' || ch == ']') {
+            if (top == -1 || !isMatchingPair(pop(), ch))
+                return 0;
+        }
+    }
+    return top == -1;
+}
+
+// Precedence function
+int precedence(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
+    if (op == '^') return 3;
+    return 0;
+}
+
+// 2. Convert infix to postfix
+void infixToPostfix(char* infix, char* postfix) {
+    top = -1;
+    int j = 0;
+    for (int i = 0; infix[i]; i++) {
+        char ch = infix[i];
+
+        if (isalnum(ch)) {
+            postfix[j++] = ch;
+        }
+        else if (ch == '(') {
+            push(ch);
+        }
+        else if (ch == ')') {
+            while (top != -1 && peek() != '(') {
+                postfix[j++] = pop();
+            }
+            pop(); // pop '('
+        }
+        else { // operator
+            while (top != -1 && precedence(peek()) >= precedence(ch)) {
+                postfix[j++] = pop();
+            }
+            push(ch);
+        }
+    }
+    while (top != -1)
+        postfix[j++] = pop();
+
+    postfix[j] = '\0';
+}
+
+// Stack for evaluation
+int evalStack[SIZE];
+int evalTop = -1;
+
+void pushEval(int val) {
+    evalStack[++evalTop] = val;
+}
+
+int popEval() {
+    return evalStack[evalTop--];
+}
+
+// 3. Evaluate postfix expression
+int evaluatePostfix(char* postfix) {
+    evalTop = -1;
+    for (int i = 0; postfix[i]; i++) {
+        char ch = postfix[i];
+        if (isdigit(ch)) {
+            pushEval(ch - '0');
+        }
+        else {
+            int val2 = popEval();
+            int val1 = popEval();
+            switch (ch) {
+                case '+': pushEval(val1 + val2); break;
+                case '-': pushEval(val1 - val2); break;
+                case '*': pushEval(val1 * val2); break;
+                case '/': pushEval(val1 / val2); break;
+                case '^': {
+                    int res = 1;
+                    for (int j = 0; j < val2; j++)
+                        res *= val1;
+                    pushEval(res);
+                    break;
+                }
+            }
+        }
+    }
+    return popEval();
+}
+
+// Main driver
+int main() {
+    char infix[SIZE], postfix[SIZE];
+
+    printf("Enter infix expression (single char operands & operators): ");
+    scanf("%s", infix);
+
+    if (isWellParenthesized(infix)) {
+        printf("Expression is well parenthesized.\n");
+
+        infixToPostfix(infix, postfix);
+        printf("Postfix Expression: %s\n", postfix);
+
+        // Assumes digits as operands for evaluation
+        if (isdigit(postfix[0])) {
+            int result = evaluatePostfix(postfix);
+            printf("Evaluation Result: %d\n", result);
+        }
+        else {
+            printf("Evaluation skipped: operands are not digits.\n");
+        }
+    }
+    else {
+        printf("Expression is NOT well parenthesized.\n");
+    }
+
+    return 0;
+}
+
+Out put=
+Enter infix expression (single char operands & operators): (3+2)*(4-1)
+Expression is well parenthesized.
+Postfix Expression: 32+41-*
+Evaluation Result: 15
