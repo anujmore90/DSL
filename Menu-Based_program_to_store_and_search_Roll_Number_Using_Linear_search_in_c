@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX 100
+
+
+bool linearSearch(int arr[], int size, int key) {
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == key)
+            return true;
+    }
+    return false;
+}
+
+int main() {
+    int rollNumbers[MAX];
+    int n, choice, i, searchRoll;
+
+    printf("Enter number of students who attended the training program: ");
+    scanf("%d", &n);
+
+    if (n <= 0 || n > MAX) {
+        printf("Invalid number of students.\n");
+        return 1;
+    }
+
+    printf("Enter the roll numbers of students (in random order):\n");
+
+    for (i = 0; i < n; i++) {
+        printf("Roll number %d: ", i + 1);
+        scanf("%d", &rollNumbers[i]);
+    }
+
+    do {
+        printf("\n--- MENU ---\n");
+        printf("1. Search for a student\n");
+        printf("2. Display all roll numbers\n");
+        printf("3. Exit\n");
+
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+
+            case 1:
+                printf("Enter roll number to search: ");
+                scanf("%d", &searchRoll);
+
+                if (linearSearch(rollNumbers, n, searchRoll))
+                    printf("Student with roll number %d attended the training program.\n",
+                           searchRoll);
+                else
+                    printf("Student with roll number %d did NOT attend the training program.\n",
+                           searchRoll);
+                break;
+
+            case 2:
+                printf("Roll numbers of students who attended the training:\n");
+
+                for (i = 0; i < n; i++) {
+                    printf("%d ", rollNumbers[i]);
+                }
+
+                printf("\n");
+                break;
+
+            case 3:
+                printf("Exiting program.\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+
+    } while (choice != 3);
+
+    return 0;
+}
+
+output-
+Enter number of students who attended the training program: 4
+Enter the roll numbers of students (in random order):
+Roll number 1: 101
+Roll number 2: 105
+Roll number 3: 109
+Roll number 4: 110
+
+--- MENU ---
+1. Search for a student
+2. Display all roll numbers
+3. Exit
+Enter your choice: 1
+Enter roll number to search: 105
+Student with roll number 105 attended the training program.
+
+--- MENU ---
+1. Search for a student
+2. Display all roll numbers
+3. Exit
+Enter your choice: 2
+Roll numbers of students who attended the training:
+101 105 109 110 
+
+--- MENU ---
+1. Search for a student
+2. Display all roll numbers
+3. Exit
+Enter your choice: 3
+Exiting program.
